@@ -1,6 +1,7 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
-import { fetchContacts, addContact, deleteContact } from "./contactsOps";
-import { selectNameFilter } from "./filtersSlice";
+import { fetchContacts, addContact, deleteContact } from "./operations";
+import { selectNameFilter } from "../filters/selectors";
+import { getContacts } from "./selectors";
 
 const handlePending = (state) => {
   state.isLoading = true;
@@ -47,16 +48,12 @@ const contactsSlice = createSlice({
   },
 });
 
-export const getContacts = (state) => state.contacts.items;
-export const getIsLoading = (state) => state.contacts.isLoading;
-export const getError = (state) => state.contacts.error;
-
 export const selectVisibleContacts = createSelector(
   [getContacts, selectNameFilter],
   (contacts, contactFilter) => {
     console.log("Contacts:", contacts);
     if (!Array.isArray(contacts)) {
-      return []; // Повертаємо пустий масив, якщо contacts не є масивом
+      return [];
     }
     return contacts.filter((contact) =>
       contact.name.toLowerCase().includes(contactFilter.toLowerCase())
