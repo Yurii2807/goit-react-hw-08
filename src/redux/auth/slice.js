@@ -1,14 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { register, login, logOut, refreshUser } from "./operations";
+import { register, login, logOut, fetchCurrentUser } from "./operations";
 
 const initialState = {
-  user: {
-    name: null,
-    email: null,
-  },
-  token: null,
+  user: null,
   isLoggedIn: false,
-  isRefreshing: false,
+  token: localStorage.getItem("token") || null,
 };
 
 const authSlice = createSlice({
@@ -48,7 +44,7 @@ const authSlice = createSlice({
         state.token = null;
         localStorage.removeItem("token");
       })
-      .addCase(refreshUser.fulfilled, (state, action) => {
+      .addCase(fetchCurrentUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isLoggedIn = true;
         state.token = localStorage.getItem("token");
@@ -57,4 +53,4 @@ const authSlice = createSlice({
 });
 
 export const { setCredentials, logOutSuccess } = authSlice.actions;
-export const authReducer = authSlice.reducer;
+export default authSlice.reducer;

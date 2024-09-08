@@ -1,13 +1,41 @@
-.list {
-  display: flex;
-  gap: 20px;
-  list-style-type: none;
-  margin-left: 15px;
+.contactList {
+  list-style: none;
   padding: 0;
-  flex-wrap: wrap;
+  max-width: 400px;
+  margin: 20px auto;
 }
-.item {
-  border: 1px solid black;
-  border-radius: 5px;
-  padding: 10px;
+
+.contact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  color: red;
+  cursor: pointer;
+  padding: 5px;
+}
+
+button:hover {
+  color: darkred;
+}
+.contactListItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.contactListButton {
+  margin: 0;
 }

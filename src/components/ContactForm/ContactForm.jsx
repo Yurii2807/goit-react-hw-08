@@ -1,60 +1,36 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useId } from "react";
-import * as Yup from "yup";
-
-import css from "./ContactForm.module.css";
-
 import { useDispatch } from "react-redux";
 import { addContact } from "../../redux/contacts/operations";
+import toast from "react-hot-toast";
+import styles from "./ContactForm.module.css";
 
-const FeedbackSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, "Too Short!")
-    .max(50, "Too Long!")
-    .required("Required"),
-  number: Yup.string()
-    .min(3, "Too Short!")
-    .max(50, "Too Long!")
-    .required("Required"),
-});
-const initialValues = {
-  name: "",
-  number: "",
-};
 const ContactForm = () => {
-  const nameFieldId = useId();
-  const numberFieldId = useId();
-
   const dispatch = useDispatch();
 
-  const handleSubmit = (values, actions) => {
-    dispatch(addContact(values));
-    actions.resetForm();
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      await dispatch(addContact(values)).unwrap();
+      resetForm();
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
-  return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      validationSchema={FeedbackSchema}
-    >
-      <Form className={css.form}>
-        <div className={css.field}>
-          <label htmlFor={nameFieldId}>Name</label>
-          <Field type="text" name="name" id={nameFieldId} />
-          <ErrorMessage className={css.ErrorMsg} name="name" component="span" />
-        </div>
 
-        <div className={css.field}>
-          <label htmlFor={numberFieldId}>Number</label>
-          <Field type="text" name="number" id={numberFieldId} />
-          <ErrorMessage
-            className={css.ErrorMsg}
-            name="number"
-            component="span"
-          />
-        </div>
-        <button className={css.btn} type="submit">
-          Add contact
+  return (
+    <Formik initialValues={{ name: "", number: "" }} onSubmit={handleSubmit}>
+      <Form className={styles.contactForm}>
+        <label>
+          Name
+          <Field type="text" name="name" />
+          <ErrorMessage name="name" component="div" />
+        </label>
+        <label>
+          Number
+          <Field type="tel" name="number" />
+          <ErrorMessage name="number" component="div" />
+        </label>
+        <button type="submit" style={{ marginTop: "15px" }}>
+          Add Contact
         </button>
       </Form>
     </Formik>

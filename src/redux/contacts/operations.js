@@ -1,39 +1,109 @@
-import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-axios.defaults.baseURL = "https://66d4455b5b34bc9ab3e1fc0.mockapi.io";
+const BASE_URL = "https://connections-api.goit.global";
 
 export const fetchContacts = createAsyncThunk(
   "contacts/fetchAll",
   async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const token = state.auth.token;
+
+    if (!token) {
+      toast.error("No token found. Please log in.");
+      return thunkAPI.rejectWithValue("No token found");
+    }
+
     try {
-      const response = await axios.get("/contacts");
+      const response = await axios.get(`${BASE_URL}/contacts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
-    } catch (e) {
-      return thunkAPI.rejectWithValue(e.message);
+    } catch (err) {
+      toast.error("Something went wrong. Please, try again later.");
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
+
 export const addContact = createAsyncThunk(
-  "contacts/addContact",
-  async (user, thunkAPI) => {
+  "contacts/add",
+  async (contact, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const token = state.auth.token;
+
+    if (!token) {
+      toast.error("No token found. Please log in.");
+      return thunkAPI.rejectWithValue("No token found");
+    }
+
     try {
-      const response = await axios.post("/contacts", { ...user });
+      const response = await axios.post(`${BASE_URL}/contacts`, contact, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
-    } catch (e) {
-      return thunkAPI.rejectWithValue(e.message);
+    } catch (err) {
+      toast.error("Something went wrong. Please, try again later.");
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
 
 export const deleteContact = createAsyncThunk(
-  "contacts/deleteContact",
+  "contacts/delete",
   async (contactId, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const token = state.auth.token;
+
+    if (!token) {
+      toast.error("No token found. Please log in.");
+      return thunkAPI.rejectWithValue("No token found");
+    }
+
     try {
-      const response = await axios.delete(`/contacts/${contactId}`);
+      await axios.delete(`${BASE_URL}/contacts/${contactId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return contactId;
+    } catch (err) {
+      toast.error("Something went wrong. Please, try again later.");
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const updateContact = createAsyncThunk(
+  "contacts/update",
+  async ({ contactId, contact }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const token = state.auth.token;
+
+    if (!token) {
+      toast.error("No token found. Please log in.");
+      return thunkAPI.rejectWithValue("No token found");
+    }
+
+    try {
+      const response = await axios.patch(
+        `${BASE_URL}/contacts/${contactId}`,
+        contact,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response.data;
-    } catch (e) {
-      return thunkAPI.rejectWithValue(e.message);
+    } catch (err) {
+      toast.error("Something went wrong. Please, try again later.");
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );

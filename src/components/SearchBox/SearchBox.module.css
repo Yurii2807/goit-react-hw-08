@@ -1,22 +1,12 @@
-.div {
-  display: flex;
-  flex-direction: column;
-  max-width: 350px;
-  margin-bottom: 12px;
+.searchBox {
+  max-width: 400px;
+  margin: 20px auto;
 }
-.label {
-  margin: 0;
-  margin-top: 25px;
-}
-.input {
-  border: 1px solid #000;
-  border-radius: 4px;
+
+input {
   width: 100%;
-  padding: 4px 8px;
-  outline: none;
-}
-.input:hover,
-.input:focus,
-.input:active {
-  border-color: rgb(55, 94, 223);
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }

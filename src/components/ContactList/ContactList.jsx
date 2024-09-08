@@ -1,23 +1,43 @@
-import Contact from "../Contact/Contact";
-import css from "./ContactList.module.css";
-
-import { useSelector } from "react-redux";
-import { selectVisibleContacts } from "../../redux/contacts/slice";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteContact } from "../../redux/contacts/operations";
+import { selectContacts } from "../../redux/contacts/selectors";
+import { selectNameFilter } from "../../redux/filters/selectors";
+import toast from "react-hot-toast";
+import styles from "./ContactList.module.css";
 
 const ContactList = () => {
-  const contacts = useSelector(selectVisibleContacts);
+  const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectNameFilter) || "";
+  const dispatch = useDispatch();
+
+  const filteredContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(filter.toLowerCase())
+  );
+
+  const handleDelete = (id) => {
+    dispatch(deleteContact(id))
+      .unwrap()
+      .then(() => toast.success("Contact deleted successfully"))
+      .catch((error) => toast.error(error.message));
+  };
+
   return (
-    <div>
-      <ul className={css.list}>
-        {contacts.map((contact) => {
-          return (
-            <li className={css.item} key={contact.id}>
-              <Contact contact={contact} />
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <ul className={styles.contactList}>
+      {filteredContacts.map(({ id, name, number }) => (
+        <li key={id} className={styles.contactListItem}>
+          <span>
+            {name}: {number}
+          </span>
+          <button
+            className={styles.contactListButton}
+            onClick={() => handleDelete(id)}
+          >
+            Delete
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 };
+
 export default ContactList;
